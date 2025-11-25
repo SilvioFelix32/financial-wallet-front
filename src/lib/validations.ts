@@ -29,8 +29,20 @@ export const depositSchema = z.object({
     .max(1000000, 'Valor máximo é R$ 1.000.000,00'),
 });
 
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export const transferSchema = z.object({
-  toUserId: z.string().uuid('ID do usuário inválido'),
+  toUserId: z
+    .string({ required_error: 'Selecione um usuário destinatário' })
+    .min(1, 'Selecione um usuário destinatário')
+    .refine(
+      (val) => {
+        const trimmed = val?.trim() || '';
+        if (trimmed === '') return false;
+        return uuidRegex.test(trimmed);
+      },
+      { message: 'ID do usuário inválido' }
+    ),
   amount: z
     .number()
     .positive('Valor deve ser positivo')
@@ -39,7 +51,13 @@ export const transferSchema = z.object({
 });
 
 export const revertSchema = z.object({
-  transactionId: z.string().uuid('ID da transação inválido'),
+  transactionId: z.string().min(1, 'ID da transação é obrigatório').refine(
+    (val) => {
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      return uuidRegex.test(val);
+    },
+    { message: 'ID da transação inválido' }
+  ),
 });
 
 export const confirmSignUpSchema = z.object({

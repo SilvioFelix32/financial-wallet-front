@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 const protectedRoutes = ['/dashboard', '/deposit', '/transfer', '/reversal'];
 const publicRoutes = ['/auth/signIn', '/auth/signUp', '/auth/forgot-password'];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get('cognito_access_token')?.value ||
     request.headers.get('authorization')?.replace('Bearer ', '');
@@ -39,3 +39,4 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
+
