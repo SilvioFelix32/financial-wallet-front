@@ -58,30 +58,27 @@ export default function Transfer() {
   const amountValue = watch('amount');
   const toUserIdValue = watch('toUserId');
 
-  if (authLoading) {
-    return (
-      <Container>
-        <FormCard>Carregando...</FormCard>
-      </Container>
-    );
-  }
-
-  if (!isAuthenticated) {
-    router.push('/auth/signIn');
-    return null;
-  }
+  const getRecipientName = useCallback(() => {
+    if (!transferData?.toUserId) return '';
+    const recipient = availableUsers.find(u => u.user_id === transferData.toUserId);
+    return recipient?.name || '';
+  }, [transferData?.toUserId, availableUsers]);
 
   const onSubmit = async (data: TransferFormData) => {
     setError(null);
     setSuccess(null);
 
-    const isValid = await trigger();
-    if (!isValid) {
+    if (!data.toUserId || data.toUserId.trim() === '') {
+      setError('Selecione um usuário destinatário');
       return;
     }
 
-    if (!data.toUserId) {
-      setError('Selecione um usuário destinatário');
+    const isValid = await trigger();
+    if (!isValid) {
+      const toUserIdError = errors.toUserId;
+      if (toUserIdError) {
+        setError(toUserIdError.message || 'ID do usuário inválido');
+      }
       return;
     }
 
@@ -136,11 +133,18 @@ export default function Transfer() {
     setTransferData(null);
   };
 
-  const getRecipientName = useCallback(() => {
-    if (!transferData?.toUserId) return '';
-    const recipient = availableUsers.find(u => u.user_id === transferData.toUserId);
-    return recipient?.name || '';
-  }, [transferData?.toUserId, availableUsers]);
+  if (authLoading) {
+    return (
+      <Container>
+        <FormCard>Carregando...</FormCard>
+      </Container>
+    );
+  }
+
+  if (!isAuthenticated) {
+    router.push('/auth/signIn');
+    return null;
+  }
 
   return (
     <Container>

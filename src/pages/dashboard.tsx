@@ -42,6 +42,9 @@ const getTransactionTypeLabel = (transaction: Transaction, currentUserId: string
     if (transaction.senderId && transaction.senderId !== currentUserId && transaction.senderName) {
       return `Transferência recebida de ${transaction.senderName}`;
     }
+    if (transaction.recipientId && transaction.recipientName) {
+      return `Transferência para ${transaction.recipientName}`;
+    }
     return 'Transferência';
   }
   
@@ -74,19 +77,6 @@ export default function Dashboard() {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [showRevertModal, setShowRevertModal] = useState(false);
   const [showBalance, setShowBalance] = useState(false);
-
-  if (authLoading || userLoading) {
-    return (
-      <Container>
-        <Card>Carregando...</Card>
-      </Container>
-    );
-  }
-
-  if (!isAuthenticated && !authLoading) {
-    router.replace('/auth/signIn');
-    return null;
-  }
 
   const userBalance = useMemo(() => user?.balance ?? 0, [user?.balance]);
   const availableUsers = useMemo(
@@ -127,6 +117,19 @@ export default function Dashboard() {
     setShowRevertModal(false);
     setSelectedTransaction(null);
   }, []);
+
+  if (authLoading || userLoading) {
+    return (
+      <Container>
+        <Card>Carregando...</Card>
+      </Container>
+    );
+  }
+
+  if (!isAuthenticated && !authLoading) {
+    router.replace('/auth/signIn');
+    return null;
+  }
 
   return (
     <Container>

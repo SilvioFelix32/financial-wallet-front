@@ -35,10 +35,12 @@ export interface Transaction {
   userId: string;
   type: string;
   amount: number;
-  referenceTransactionId: string | null;
+  referenceTransactionId?: string | null;
   createdAt: string;
   senderId?: string;
   senderName?: string;
+  recipientId?: string;
+  recipientName?: string;
 }
 
 export interface TransactionsResponse {
