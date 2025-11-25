@@ -68,7 +68,17 @@ export default function ConfirmSignUp() {
         router.push('/auth/signIn');
       }, 2000);
     } catch (err: any) {
-      setError(err.message || 'Erro ao confirmar conta');
+      const errorMessage = err.message || 'Erro ao confirmar conta';
+      
+      if (errorMessage.includes('CONFIRMED') || errorMessage.includes('already confirmed')) {
+        setSuccess('Conta já confirmada! Redirecionando para login...');
+        setTimeout(() => {
+          router.push('/auth/signIn');
+        }, 1500);
+        return;
+      }
+      
+      setError(errorMessage);
     }
   };
 

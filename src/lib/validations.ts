@@ -33,7 +33,7 @@ const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
 
 export const transferSchema = z.object({
   toUserId: z
-    .string({ required_error: 'Selecione um usuário destinatário' })
+    .string({ message: 'Selecione um usuário destinatário' })
     .min(1, 'Selecione um usuário destinatário')
     .refine(
       (val) => {

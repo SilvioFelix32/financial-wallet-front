@@ -10,8 +10,6 @@ export const useUser = () => {
   const userId = useMemo(() => {
     if (!user) return null;
     
-    if (user.user_id) return user.user_id;
-    
     if (user.sub) return user.sub;
     
     try {

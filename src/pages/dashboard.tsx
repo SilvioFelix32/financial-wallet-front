@@ -51,8 +51,8 @@ const getTransactionTypeLabel = (transaction: Transaction, currentUserId: string
   const types: Record<string, string> = {
     DEPOSIT: 'Depósito',
     deposit: 'Depósito',
-    REVERSAL: 'Reversão',
-    reversal: 'Reversão',
+    REVERSAL: 'Transferência revertida',
+    reversal: 'Transferência revertida',
   };
   return types[type] || type;
 };
@@ -83,6 +83,17 @@ export default function Dashboard() {
     () => usersList.filter((u) => u.user_id !== userId),
     [usersList, userId]
   );
+
+  const revertedTransactionIds = useMemo(() => {
+    const ids = new Set<string>();
+    transactions.forEach((t) => {
+      const type = t.type.toUpperCase();
+      if ((type === 'REVERSAL' || type === 'REVERT') && t.referenceTransactionId) {
+        ids.add(t.referenceTransactionId);
+      }
+    });
+    return ids;
+  }, [transactions]);
 
   const handleRevertClick = useCallback((transaction: Transaction) => {
     const type = transaction.type.toUpperCase();
@@ -268,7 +279,9 @@ export default function Dashboard() {
                     {transaction.type.toUpperCase() !== 'REVERSAL' && 
                      transaction.type.toUpperCase() !== 'REVERT' &&
                      transaction.type.toUpperCase() !== 'DEPOSIT' &&
-                     transaction.type.toUpperCase() !== 'deposit' && (
+                     transaction.type.toUpperCase() !== 'deposit' &&
+                     !revertedTransactionIds.has(transaction.id) &&
+                     !isReceivedTransfer && (
                       <Button
                         variant="outline"
                         size="sm"

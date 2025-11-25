@@ -233,39 +233,8 @@ export const authService = {
         confirmationCode,
       });
 
-      const session = await fetchAuthSession({ forceRefresh: true });
-      if (!session.tokens?.accessToken || !session.tokens?.idToken) {
-        throw new Error('Erro ao obter tokens de autenticação');
-      }
-
-      const accessToken = session.tokens.accessToken.toString();
-      const idToken = session.tokens.idToken.toString();
-
-      setCookie('cognito_access_token', accessToken, 7);
-      setCookie('cognito_id_token', idToken, 7);
-
-      const decodedToken = decodeJwt(idToken);
-      const user_id = decodedToken.sub as string;
-      const userName = decodedToken.name as string || email;
-
-      if (!user_id) {
-        throw new Error('Erro ao obter ID do usuário do token');
-      }
-
-      const user = await userService.createOrSync({
-        user_id,
-        name: userName,
-        email,
-      });
-
-      if (!user || !user.user_id) {
-        throw new Error('Erro ao criar ou sincronizar usuário no banco de dados');
-      }
-
       return result;
     } catch (error: any) {
-      removeCookie('cognito_access_token');
-      removeCookie('cognito_id_token');
       throw new Error('Erro ao confirmar cadastro: ' + error.message);
     }
   },
