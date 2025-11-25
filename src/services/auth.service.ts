@@ -59,6 +59,17 @@ export const authService = {
 
   async signIn({ email, password }: SignInParams) {
     try {
+      try {
+        const session = await fetchAuthSession({ forceRefresh: false });
+        if (session.tokens?.accessToken) {
+          await signOut();
+          removeCookie('cognito_access_token');
+          removeCookie('cognito_id_token');
+        }
+      } catch {
+        // Sem sessão ativa, pode prosseguir com login
+      }
+
       const { isSignedIn, nextStep } = await signIn({
         username: email,
         password,

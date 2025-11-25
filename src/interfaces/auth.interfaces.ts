@@ -23,3 +23,20 @@ export interface ConfirmForgotPasswordParams {
   confirmationCode: string;
   newPassword: string;
 }
+
+export interface AuthUser {
+  sub: string;
+  email: string;
+  name: string;
+}
+
+export interface AuthState {
+  user: AuthUser | null;
+  loading: boolean;
+  checked: boolean;
+}
+
+export interface LoginResult {
+  success: boolean;
+  error?: string;
+}

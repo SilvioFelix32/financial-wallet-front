@@ -15,11 +15,27 @@ export const userService = {
     const syncCookie = getCookie(`${SYNC_COOKIE_NAME}_${data.user_id}`);
     
     if (syncCookie === 'true') {
-      return this.getById(data.user_id);
+      try {
+        return await this.getById(data.user_id);
+      } catch (error: any) {
+        if (error?.response?.status === 404 || error?.response?.data?.statusCode === 404) {
+          removeCookie(`${SYNC_COOKIE_NAME}_${data.user_id}`);
+          return await this.createUser(data);
+        }
+        throw error;
+      }
     }
 
-    const user = await this.createUser(data);
-    return user;
+    try {
+      const existingUser = await this.getById(data.user_id);
+      setCookie(`${SYNC_COOKIE_NAME}_${data.user_id}`, 'true', SYNC_COOKIE_EXPIRES_DAYS);
+      return existingUser;
+    } catch (error: any) {
+      if (error?.response?.status === 404 || error?.response?.data?.statusCode === 404) {
+        return await this.createUser(data);
+      }
+      throw error;
+    }
   },
 
   async createUser(data: CreateUserRequest): Promise<User> {
@@ -34,6 +50,11 @@ export const userService = {
       setCookie(`${SYNC_COOKIE_NAME}_${data.user_id}`, 'true', SYNC_COOKIE_EXPIRES_DAYS);
       return createdUser;
     } catch (createError: any) {
+      if (createError?.response?.status === 409 || createError?.response?.data?.statusCode === 409) {
+        const existingUser = await this.getById(data.user_id);
+        setCookie(`${SYNC_COOKIE_NAME}_${data.user_id}`, 'true', SYNC_COOKIE_EXPIRES_DAYS);
+        return existingUser;
+      }
       throw new Error(`Erro ao criar usuário: ${createError.message}`);
     }
   },

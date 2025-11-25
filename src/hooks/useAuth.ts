@@ -1,106 +1,181 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { authService } from '@/services/auth.service';
 import { userService } from '@/services/user.service';
 import { removeCookie } from '@/utils/cookies';
+import type { AuthUser, AuthState, LoginResult } from '@/interfaces/auth.interfaces';
+
+const globalAuthState: AuthState = {
+  user: null,
+  loading: true,
+  checked: false,
+};
+
+const listeners = new Set<(state: AuthState) => void>();
+let checkPromise: Promise<void> | null = null;
+
+const updateGlobalState = (updates: Partial<AuthState>) => {
+  Object.assign(globalAuthState, updates);
+  listeners.forEach((listener) => listener({ ...globalAuthState }));
+};
+
+const syncUserToDatabase = async (userData: { user_id: string; name: string; email: string }) => {
+  try {
+    await userService.createOrSync(userData);
+  } catch (error) {
+    console.error('Erro ao sincronizar usuário:', error);
+  }
+};
+
+const createUserAttributes = (userData: { user_id: string; email: string; name: string }): AuthUser => ({
+  sub: userData.user_id,
+  email: userData.email,
+  name: userData.name,
+});
+
+const clearAuthState = () => {
+  updateGlobalState({
+    user: null,
+    loading: false,
+    checked: true,
+  });
+  removeCookie('cognito_access_token');
+  removeCookie('cognito_id_token');
+};
+
+const checkAuth = async (): Promise<void> => {
+  if (globalAuthState.checked) {
+    return;
+  }
+
+  if (checkPromise) {
+    await checkPromise;
+    return;
+  }
+
+  checkPromise = (async () => {
+    try {
+      updateGlobalState({ loading: true });
+
+      if (!authService.isAuthenticated()) {
+        clearAuthState();
+        return;
+      }
+
+      const userData = await authService.getUserDataFromToken();
+      if (userData) {
+        const userAttributes = createUserAttributes(userData);
+        updateGlobalState({
+          user: userAttributes,
+          loading: false,
+          checked: true,
+        });
+        await syncUserToDatabase(userData);
+        return;
+      }
+
+      const hasValidSession = await authService.checkAuthSession();
+      if (hasValidSession) {
+        const currentUser = await authService.getCurrentUser();
+        updateGlobalState({
+          user: currentUser as AuthUser,
+          loading: false,
+          checked: true,
+        });
+      } else {
+        clearAuthState();
+      }
+    } catch (error) {
+      clearAuthState();
+    } finally {
+      checkPromise = null;
+    }
+  })();
+
+  await checkPromise;
+};
 
 export const useAuth = () => {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [localState, setLocalState] = useState<AuthState>({ ...globalAuthState });
   const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
+    const listener = (state: AuthState) => {
+      setLocalState({ ...state });
+    };
+
+    listeners.add(listener);
+    setLocalState({ ...globalAuthState });
+
+    if (!globalAuthState.checked) {
+      checkAuth();
+    }
+
+    return () => {
+      listeners.delete(listener);
+    };
   }, []);
 
-  const checkAuth = async () => {
+  const login = useCallback(async (email: string, password: string): Promise<LoginResult> => {
     try {
-      const hasValidSession = await authService.checkAuthSession();
-      if (hasValidSession) {
-        await authService.refreshSession();
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
-
+      if (authService.isAuthenticated()) {
         const userData = await authService.getUserDataFromToken();
         if (userData) {
-          try {
-            await userService.createOrSync({
-              user_id: userData.user_id,
-              name: userData.name,
-              email: userData.email,
-            });
-          } catch (syncError) {
-          }
+          const userAttributes = createUserAttributes(userData);
+          updateGlobalState({
+            user: userAttributes,
+            checked: true,
+          });
+          await syncUserToDatabase(userData);
         }
-      } else {
-        setUser(null);
-        removeCookie('cognito_access_token');
-        removeCookie('cognito_id_token');
-      }
-    } catch (error) {
-      setUser(null);
-      removeCookie('cognito_access_token');
-      removeCookie('cognito_id_token');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const login = async (email: string, password: string) => {
-    try {
-      const hasValidSession = await authService.checkAuthSession();
-      if (hasValidSession) {
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
-
-        const userData = await authService.getUserDataFromToken();
-        if (userData) {
-          try {
-            await userService.createOrSync({
-              user_id: userData.user_id,
-              name: userData.name,
-              email: userData.email,
-            });
-          } catch (syncError) {
-          }
-        }
-
         return { success: true };
       }
 
       const result = await authService.signIn({ email, password });
       if (result.isSignedIn) {
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
+        const userData = await authService.getUserDataFromToken();
+        if (userData) {
+          const userAttributes = createUserAttributes(userData);
+          updateGlobalState({
+            user: userAttributes,
+            checked: true,
+          });
+        }
         return { success: true };
       }
+
       return {
         success: false,
         error: 'Login não completado',
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao fazer login';
       return {
         success: false,
-        error: error.message || 'Erro ao fazer login',
+        error: errorMessage,
       };
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await authService.signOut();
-      setUser(null);
+      updateGlobalState({
+        user: null,
+        checked: false,
+      });
       router.push('/auth/signIn');
     } catch (error) {
+      console.error('Erro ao fazer logout:', error);
     }
-  };
+  }, [router]);
 
   return {
-    user,
-    loading,
+    user: localState.user,
+    loading: localState.loading,
     login,
     logout,
-    isAuthenticated: !!user,
+    isAuthenticated: !!localState.user,
   };
 };
 
