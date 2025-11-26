@@ -10,13 +10,23 @@ import { Input } from '@/components/Input';
 import { Label } from '@/components/Label';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { SuccessMessage } from '@/components/SuccessMessage';
+import dynamic from 'next/dynamic';
+
+const Player = dynamic(
+  () => import('@lottiefiles/react-lottie-player').then((mod) => mod.Player),
+  { ssr: false }
+);
 import Link from 'next/link';
 import {
   Container,
   FormCard,
+  PlayerWrapper,
+  FormHeader,
   Title,
   Form,
+  FormFields,
   FormGroup,
+  FormActions,
   LinkContainer,
   StyledLink,
 } from '@/styles/pages/auth.styles';
@@ -80,69 +90,83 @@ export default function ConfirmForgotPassword() {
   return (
     <Container>
       <FormCard>
-        <Title>Redefinir Senha</Title>
+        <PlayerWrapper>
+          <Player
+            autoplay
+            loop
+            src="https://lottie.host/44abdd4b-e3d8-4602-983b-a3cb64e11e6c/HqjtspK3un.json"
+            style={{ height: "120px", width: "120px" }}
+          />
+        </PlayerWrapper>
+        <FormHeader>
+          <Title>Redefinir Senha</Title>
+        </FormHeader>
         <Form onSubmit={handleSubmit(onSubmit)}>
-          <FormGroup>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              disabled
-              hasError={!!errors.email}
-              {...register('email')}
-            />
-            {errors.email && (
-              <ErrorMessage>{errors.email.message}</ErrorMessage>
-            )}
-          </FormGroup>
+          <FormFields>
+            <FormGroup>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                disabled
+                hasError={!!errors.email}
+                {...register('email')}
+              />
+              {errors.email && (
+                <ErrorMessage>{errors.email.message}</ErrorMessage>
+              )}
+            </FormGroup>
 
-          <FormGroup>
-            <Label htmlFor="confirmationCode">Código de Confirmação</Label>
-            <Input
-              id="confirmationCode"
-              type="text"
-              placeholder="000000"
-              maxLength={6}
-              hasError={!!errors.confirmationCode}
-              {...register('confirmationCode')}
-            />
-            {errors.confirmationCode && (
-              <ErrorMessage>{errors.confirmationCode.message}</ErrorMessage>
-            )}
-          </FormGroup>
+            <FormGroup>
+              <Label htmlFor="confirmationCode">Código de Confirmação</Label>
+              <Input
+                id="confirmationCode"
+                type="text"
+                placeholder="000000"
+                maxLength={6}
+                hasError={!!errors.confirmationCode}
+                {...register('confirmationCode')}
+              />
+              {errors.confirmationCode && (
+                <ErrorMessage>{errors.confirmationCode.message}</ErrorMessage>
+              )}
+            </FormGroup>
 
-          <FormGroup>
-            <Label htmlFor="newPassword">Nova Senha</Label>
-            <Input
-              id="newPassword"
-              type="password"
-              placeholder="••••••••"
-              hasError={!!errors.newPassword}
-              {...register('newPassword')}
-            />
-            {errors.newPassword && (
-              <ErrorMessage>{errors.newPassword.message}</ErrorMessage>
-            )}
-          </FormGroup>
+            <FormGroup>
+              <Label htmlFor="newPassword">Nova Senha</Label>
+              <Input
+                id="newPassword"
+                type="password"
+                placeholder="••••••••"
+                hasError={!!errors.newPassword}
+                {...register('newPassword')}
+              />
+              {errors.newPassword && (
+                <ErrorMessage>{errors.newPassword.message}</ErrorMessage>
+              )}
+            </FormGroup>
 
-          {error && <ErrorMessage>{error}</ErrorMessage>}
-          {success && <SuccessMessage>{success}</SuccessMessage>}
+            {error && <ErrorMessage>{error}</ErrorMessage>}
+            {success && <SuccessMessage>{success}</SuccessMessage>}
+          </FormFields>
 
-          <Button
-            type="submit"
-            fullWidth
-            disabled={isSubmitting}
-            variant="primary"
-          >
-            {isSubmitting ? 'Redefinindo...' : 'Redefinir Senha'}
-          </Button>
+          <FormActions>
+            <Button
+              type="submit"
+              fullWidth
+              disabled={isSubmitting}
+              variant="primary"
+            >
+              {isSubmitting ? 'Redefinindo...' : 'Redefinir Senha'}
+            </Button>
 
-          <LinkContainer>
-            <Link href="/auth/signIn">
-              <StyledLink>Voltar para login</StyledLink>
-            </Link>
-          </LinkContainer>
+            <LinkContainer>
+              <Link href="/auth/signIn">
+                <StyledLink>Voltar para login</StyledLink>
+              </Link>
+            </LinkContainer>
+          </FormActions>
         </Form>
       </FormCard>
     </Container>

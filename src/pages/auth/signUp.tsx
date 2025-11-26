@@ -56,7 +56,7 @@ export default function SignUp() {
   return (
     <Container>
       <FormCard>
-        <Title>Criar Conta</Title>
+        <Title style={{ textAlign: 'center', marginBottom: '15px' }}>Criar Conta</Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <FormGroup>
             <Label htmlFor="name">Nome</Label>
