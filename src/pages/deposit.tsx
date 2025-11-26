@@ -100,7 +100,7 @@ export default function Deposit() {
                       type="text"
                       placeholder="R$ 0,00"
                       hasError={!!errors.amount}
-                      value={formatCurrencyInput(field.value ? (field.value * 100).toString() : '')}
+                      value={formatCurrencyInput(field.value ? Math.round(field.value * 100).toString() : '')}
                       onChange={(e) => {
                         const parsed = parseNumber(e.target.value);
                         field.onChange(parsed);

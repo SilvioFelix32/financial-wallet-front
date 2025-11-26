@@ -263,7 +263,7 @@ export default function Transfer() {
                       type="text"
                       placeholder="R$ 0,00"
                       hasError={!!errors.amount || (!!amountValue && amountValue > userBalance)}
-                      value={formatCurrencyInput(field.value ? (field.value * 100).toString() : '')}
+                      value={formatCurrencyInput(field.value ? Math.round(field.value * 100).toString() : '')}
                       onChange={(e) => {
                         const parsed = parseNumber(e.target.value);
                         field.onChange(parsed);
@@ -276,7 +276,7 @@ export default function Transfer() {
               {errors.amount && (
                 <ErrorMessage>{errors.amount.message}</ErrorMessage>
               )}
-              {amountValue && amountValue > userBalance && (
+              {amountValue > 0 && amountValue > userBalance && (
                 <ErrorMessage>Saldo disponível insuficiente.</ErrorMessage>
               )}
             </FormGroup>
