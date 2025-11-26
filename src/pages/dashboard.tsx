@@ -18,6 +18,7 @@ import {
   BalanceValue,
   ActionsGrid,
   TransactionsCard,
+  TransactionsHeader,
   TransactionsTitle,
   TransactionList,
   TransactionItem,
@@ -27,7 +28,9 @@ import {
   TransactionAmount,
   EmptyState,
   UsersListCard,
+  UsersListHeader,
   UsersListTitle,
+  ExpandIcon,
   UsersList,
   UserListItem,
   UserName,
@@ -77,6 +80,8 @@ export default function Dashboard() {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [showRevertModal, setShowRevertModal] = useState(false);
   const [showBalance, setShowBalance] = useState(false);
+  const [showUsersList, setShowUsersList] = useState(false);
+  const [showTransactions, setShowTransactions] = useState(true);
 
   const userBalance = useMemo(() => user?.balance ?? 0, [user?.balance]);
   const availableUsers = useMemo(
@@ -217,11 +222,31 @@ export default function Dashboard() {
 
       {availableUsers.length > 0 && (
         <UsersListCard>
-          <UsersListTitle>Usuários Disponíveis para Transferência</UsersListTitle>
+          <UsersListHeader
+            type="button"
+            onClick={() => setShowUsersList(!showUsersList)}
+            aria-expanded={showUsersList}
+          >
+            <UsersListTitle>Usuários Disponíveis para Transferência</UsersListTitle>
+            <ExpandIcon $expanded={showUsersList}>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </ExpandIcon>
+          </UsersListHeader>
           {usersListLoading ? (
             <EmptyState>Carregando usuários...</EmptyState>
           ) : (
-            <UsersList>
+            <UsersList $expanded={showUsersList}>
               {availableUsers.map((u) => (
                 <UserListItem key={u.user_id}>
                   <div>
@@ -236,13 +261,33 @@ export default function Dashboard() {
       )}
 
       <TransactionsCard>
-        <TransactionsTitle>Transações Recentes</TransactionsTitle>
+        <TransactionsHeader
+          type="button"
+          onClick={() => setShowTransactions(!showTransactions)}
+          aria-expanded={showTransactions}
+        >
+          <TransactionsTitle>Transações Recentes</TransactionsTitle>
+          <ExpandIcon $expanded={showTransactions}>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </ExpandIcon>
+        </TransactionsHeader>
         {transactionsLoading ? (
           <EmptyState>Carregando transações...</EmptyState>
         ) : transactions.length === 0 ? (
           <EmptyState>Nenhuma transação encontrada</EmptyState>
         ) : (
-          <TransactionList>
+          <TransactionList $expanded={showTransactions}>
             {transactions.map((transaction) => {
               const isReceivedTransfer = 
                 (transaction.type.toUpperCase() === 'TRANSFER' || transaction.type.toUpperCase() === 'transfer') &&
