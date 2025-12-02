@@ -36,6 +36,15 @@ export interface AuthState {
   checked: boolean;
 }
 
+export interface AuthStoreState extends AuthState {
+  checkAuth: () => Promise<void>;
+  login: (email: string, password: string) => Promise<LoginResult>;
+  logout: () => Promise<void>;
+  setUser: (user: AuthUser | null) => void;
+  setLoading: (loading: boolean) => void;
+  setChecked: (checked: boolean) => void;
+}
+
 export interface LoginResult {
   success: boolean;
   error?: string;
