@@ -9,4 +9,7 @@ export const environment = {
   api: {
     baseURL: process.env.NEXT_PUBLIC_API_URL,
   },
+  cron: {
+    secret: process.env.CRON_SECRET,
+  },
 };
