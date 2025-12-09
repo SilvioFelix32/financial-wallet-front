@@ -126,16 +126,16 @@ export const TransactionDate = styled.p<TransactionDateProps>`
 `;
 
 type TransactionAmountProps = {
-  negative?: boolean;
-  positive?: boolean;
+  $negative?: boolean;
+  $positive?: boolean;
 };
 
 export const TransactionAmount = styled.span<TransactionAmountProps>`
   font-weight: bold;
   font-size: ${({ theme }) => theme.typography.body};
-  color: ${({ theme, negative, positive }) => {
-    if (negative) return theme.colors.error;
-    if (positive) return theme.colors.success;
+  color: ${({ theme, $negative, $positive }) => {
+    if ($negative) return theme.colors.error;
+    if ($positive) return theme.colors.success;
     return theme.colors.success;
   }};
 `;

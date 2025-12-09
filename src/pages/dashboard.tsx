@@ -301,7 +301,6 @@ export default function Dashboard() {
               
               const isIncome = Boolean(isReceivedTransfer || (isDeposit && transaction.amount > 0));
               const isOutcome = Boolean(!isIncome && transaction.amount < 0);
-              const isPositiveAmount = Boolean(!isReceivedTransfer && isIncome);
               
               return (
                 <TransactionItem key={transaction.id}>
@@ -315,8 +314,8 @@ export default function Dashboard() {
                   </TransactionInfo>
                   <TransactionActions>
                     <TransactionAmount 
-                      negative={isOutcome} 
-                      positive={isIncome}
+                      $negative={isOutcome} 
+                      $positive={isIncome}
                     >
                       {transaction.amount > 0 ? '+' : ''}
                       {formatCurrency(transaction.amount)}
