@@ -21,7 +21,6 @@ import {
   Container,
   FormCard,
   PlayerWrapper,
-  FormHeader,
   Title,
   Form,
   FormFields,

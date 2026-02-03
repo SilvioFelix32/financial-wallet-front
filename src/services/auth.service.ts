@@ -33,7 +33,7 @@ const decodeJwt = (token: string): any => {
         .join('')
     );
     return JSON.parse(jsonPayload);
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -130,7 +130,7 @@ export const authService = {
             if (user_id) {
               removeCookie(`user_synced_${user_id}`);
             }
-          } catch (error) {
+          } catch {
           }
         }
       }
@@ -156,7 +156,7 @@ export const authService = {
     try {
       const attributes = await fetchUserAttributes();
       return attributes;
-    } catch (error) {
+    } catch {
       return null;
     }
   },
@@ -186,7 +186,7 @@ export const authService = {
         email,
         name: userName,
       };
-    } catch (error) {
+    } catch {
       return null;
     }
   },
@@ -221,7 +221,7 @@ export const authService = {
     try {
       const session = await fetchAuthSession({ forceRefresh: false });
       return session.tokens?.accessToken?.toString() || null;
-    } catch (error) {
+    } catch {
       return null;
     }
   },
@@ -276,7 +276,7 @@ export const authService = {
     try {
       const session = await fetchAuthSession({ forceRefresh: false });
       return !!session.tokens?.accessToken;
-    } catch (error) {
+    } catch {
       return false;
     }
   },

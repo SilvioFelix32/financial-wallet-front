@@ -84,7 +84,7 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
         removeCookie('cognito_access_token');
         removeCookie('cognito_id_token');
       }
-    } catch (error) {
+    } catch {
       set({
         user: null,
         loading: false,
