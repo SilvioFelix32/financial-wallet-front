@@ -1,4 +1,4 @@
-import type { Transaction } from '@/interfaces/wallet.interfaces';
+import type { TransactionItemProps } from '@/interfaces/dashboard.interfaces';
 import { Button } from '@/components/Button';
 import {
   TransactionItem as StyledTransactionItem,
@@ -10,14 +10,6 @@ import {
 } from './styles';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { getTransactionTypeLabel, calculateTransactionType, isReversal, isDeposit, isReceivedTransfer } from '../utils';
-
-interface TransactionItemProps {
-  transaction: Transaction;
-  userId: string | null;
-  revertedTransactionIds: Set<string>;
-  revertLoading: boolean;
-  onRevertClick: (transaction: Transaction) => void;
-}
 
 export const TransactionItem: React.FC<TransactionItemProps> = ({
   transaction,

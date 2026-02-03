@@ -1,18 +1,31 @@
 import { useState } from 'react';
-import type { BalanceCardProps } from '@/interfaces/dashboard.interfaces';
-import { BalanceCard, BalanceLabel, BalanceValue, ToggleButton } from './styles';
+import type { BalanceDisplayProps } from '@/interfaces/transfer.interfaces';
+import { Label } from '@/components/Label';
+import { FormGroup } from './styles';
 import { formatCurrency } from '@/utils/formatters';
 
-export const BalanceCardComponent: React.FC<BalanceCardProps> = ({ balance, loading = false }) => {
+export const BalanceDisplay: React.FC<BalanceDisplayProps> = ({ balance, loading = false }) => {
   const [showBalance, setShowBalance] = useState(false);
 
   return (
-    <BalanceCard>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <BalanceLabel style={{ margin: 0 }}>Saldo Atual</BalanceLabel>
-        <ToggleButton
+    <FormGroup>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+        <Label style={{ margin: 0 }}>Saldo Disponível</Label>
+        <button
           type="button"
           onClick={() => setShowBalance(!showBalance)}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            color: '#666',
+            transition: 'color 0.2s',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#333'}
+          onMouseLeave={(e) => e.currentTarget.style.color = '#666'}
           aria-label={showBalance ? 'Ocultar saldo' : 'Mostrar saldo'}
         >
           <svg
@@ -37,19 +50,21 @@ export const BalanceCardComponent: React.FC<BalanceCardProps> = ({ balance, load
               </>
             )}
           </svg>
-        </ToggleButton>
+        </button>
       </div>
       {loading ? (
-        <BalanceValue>Carregando...</BalanceValue>
+        <p style={{ margin: 0, color: '#666' }}>Carregando...</p>
       ) : (
-        <BalanceValue 
-          $negative={balance < 0} 
-          $positive={balance > 0}
-        >
+        <p style={{
+          margin: 0,
+          fontSize: '18px',
+          fontWeight: 600,
+          color: balance < 0 ? '#e74c3c' : balance > 0 ? '#27ae60' : '#666'
+        }}>
           {showBalance ? formatCurrency(balance) : '••••••'}
-        </BalanceValue>
+        </p>
       )}
-    </BalanceCard>
+    </FormGroup>
   );
 };
 

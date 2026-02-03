@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { User } from '@/interfaces/user.interfaces';
+import type { UsersListProps } from '@/interfaces/dashboard.interfaces';
 import {
   UsersListCard,
   UsersListHeader,
@@ -11,11 +11,6 @@ import {
   UserEmail,
   EmptyState,
 } from './styles';
-
-interface UsersListProps {
-  users: User[];
-  loading?: boolean;
-}
 
 export const UsersListComponent: React.FC<UsersListProps> = ({ users, loading = false }) => {
   const [showUsersList, setShowUsersList] = useState(false);

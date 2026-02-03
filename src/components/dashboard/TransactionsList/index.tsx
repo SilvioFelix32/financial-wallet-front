@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import type { Transaction } from '@/interfaces/wallet.interfaces';
+import type { TransactionsListProps } from '@/interfaces/dashboard.interfaces';
 import {
   TransactionsCard,
   TransactionsHeader,
@@ -10,14 +10,6 @@ import {
 } from './styles';
 import { TransactionItem } from '../TransactionItem';
 import { getRevertedTransactionIds } from '../utils';
-
-interface TransactionsListProps {
-  transactions: Transaction[];
-  loading?: boolean;
-  userId: string | null;
-  revertLoading: boolean;
-  onRevertClick: (transaction: Transaction) => void;
-}
 
 export const TransactionsList: React.FC<TransactionsListProps> = ({
   transactions,

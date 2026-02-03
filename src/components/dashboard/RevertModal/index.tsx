@@ -1,17 +1,8 @@
-import type { Transaction } from '@/interfaces/wallet.interfaces';
+import type { RevertModalProps } from '@/interfaces/dashboard.interfaces';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/Button';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { getTransactionTypeLabel } from '../utils';
-
-interface RevertModalProps {
-  isOpen: boolean;
-  transaction: Transaction | null;
-  userId: string | null;
-  loading: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
-}
 
 export const RevertModal: React.FC<RevertModalProps> = ({
   isOpen,
