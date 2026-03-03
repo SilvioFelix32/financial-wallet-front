@@ -105,10 +105,10 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
       <TransactionInfo>
         <TransactionDescription>
           {description}
-          <Badge $variant={getBadgeVariant(badgeLabel)}>{badgeLabel}</Badge>
         </TransactionDescription>
         <TransactionDate>{formatDate(transaction.createdAt)}</TransactionDate>
       </TransactionInfo>
+      <Badge $variant={getBadgeVariant(badgeLabel)}>{badgeLabel}</Badge>
       <TransactionRight>
         <TransactionAmount $positive={isIncome} $negative={isOutcome}>
           {transaction.amount > 0 ? '+' : ''}

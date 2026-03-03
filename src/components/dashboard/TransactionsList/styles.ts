@@ -22,6 +22,26 @@ export const TransactionsTitle = styled.h3`
   color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
+export const TransactionsBody = styled.div<{ $scrollable: boolean }>`
+  --tx-row-height: 3.75rem;
+
+  @media (min-width: 1024px) {
+    --tx-row-height: 4.5rem;
+  }
+
+  ${({ $scrollable }) =>
+    $scrollable
+      ? `
+    max-height: calc(var(--tx-row-height) * 10);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  `
+      : `
+    max-height: none;
+    overflow: visible;
+  `}
+`;
+
 export const TransactionList = styled.ul`
   list-style: none;
   margin: 0;

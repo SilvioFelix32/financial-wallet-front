@@ -52,6 +52,9 @@ export const TransactionDescription = styled.p`
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const Badge = styled.span<{ $variant?: 'success' | 'error' | 'neutral' }>`
@@ -65,6 +68,7 @@ export const Badge = styled.span<{ $variant?: 'success' | 'error' | 'neutral' }>
     if ($variant === 'error') return `background: ${theme.colors.errorSoft}; color: ${theme.colors.error};`;
     return `background: ${theme.colors.surfaceAlt}; color: ${theme.colors.textSecondary};`;
   }}
+  margin-left: auto;
 `;
 
 export const TransactionDate = styled.p`

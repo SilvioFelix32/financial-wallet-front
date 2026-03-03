@@ -13,9 +13,6 @@ import type { Transaction } from '@/interfaces/wallet.interfaces';
 import {
   Container,
   ContentSection,
-  GreetingSection,
-  GreetingTitle,
-  GreetingSubtitle,
   ContentGrid,
   GridCol2,
   GridCol3,
@@ -25,14 +22,21 @@ import { UserHeader } from '@/components/UserHeader';
 export default function Dashboard() {
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
-  const { transactions, transactionsLoading, revert, revertLoading } = useWallet();
+  const {
+    transactions,
+    transactionsLoading,
+    transactionsHasMore,
+    transactionsFetchingMore,
+    transactionsLoadMore,
+    revert,
+    revertLoading,
+  } = useWallet();
   const { user, userLoading, usersList, usersListLoading, userId } = useUser();
 
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [showRevertModal, setShowRevertModal] = useState(false);
 
   const userBalance = useMemo(() => user?.balance ?? 0, [user?.balance]);
-  const userName = user?.name || user?.email || 'Usuário';
   const availableUsers = useMemo(
     () => usersList.filter((u) => u.user_id !== userId),
     [usersList, userId]
@@ -85,12 +89,8 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      <UserHeader />
       <ContentSection>
-        <GreetingSection>
-          <GreetingTitle>Olá, {userName}</GreetingTitle>
-          <GreetingSubtitle>Bem-vindo à sua carteira digital</GreetingSubtitle>
-        </GreetingSection>
+        <UserHeader />
         <BalanceCardComponent balance={userBalance} loading={userLoading} />
 
         <ContentGrid>
@@ -104,6 +104,11 @@ export default function Dashboard() {
               userId={userId}
               revertLoading={revertLoading}
               onRevertClick={handleRevertClick}
+              hasMore={transactionsHasMore}
+              isFetchingMore={transactionsFetchingMore}
+              onLoadMore={() => {
+                void transactionsLoadMore();
+              }}
             />
           </GridCol3>
         </ContentGrid>

@@ -17,6 +17,9 @@ export interface TransactionsListProps {
   userId: string | null;
   revertLoading: boolean;
   onRevertClick: (transaction: Transaction) => void;
+  hasMore?: boolean;
+  isFetchingMore?: boolean;
+  onLoadMore?: () => void;
 }
 
 export interface TransactionItemProps {

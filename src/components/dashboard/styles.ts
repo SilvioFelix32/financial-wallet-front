@@ -25,11 +25,12 @@ export const GreetingSection = styled.div`
 `;
 
 export const GreetingTitle = styled.h1`
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: ${({ theme }) => theme.colors.textPrimary};
   margin: 0;
+  word-break: break-word;
   @media (min-width: 1024px) {
     font-size: 1.875rem;
   }
@@ -39,6 +40,7 @@ export const GreetingSubtitle = styled.p`
   margin: 0.25rem 0 0;
   font-size: ${({ theme }) => theme.typography.small};
   color: ${({ theme }) => theme.colors.textSecondary};
+  word-break: break-word;
 `;
 
 export const ContentGrid = styled.div`

@@ -1,4 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMemo } from 'react';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { walletService } from '@/services/wallet.service';
 import type {
   DepositRequest,
@@ -15,11 +16,23 @@ export const useWallet = () => {
     refetchOnWindowFocus: true,
   });
 
-  const transactionsQuery = useQuery({
+  const transactionsQuery = useInfiniteQuery({
     queryKey: ['wallet', 'transactions'],
-    queryFn: () => walletService.getTransactions(1, 10),
+    queryFn: ({ pageParam }) => walletService.getTransactions((pageParam as number) ?? 1, 10),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      const currentPage = lastPage.pagination.page;
+      const totalPages = lastPage.pagination.totalPages;
+      if (currentPage < totalPages) return currentPage + 1;
+      return undefined;
+    },
     refetchOnWindowFocus: true,
   });
+
+  const transactions = useMemo(
+    () => transactionsQuery.data?.pages.flatMap((p) => p.transactions) ?? [],
+    [transactionsQuery.data]
+  );
 
   const depositMutation = useMutation({
     mutationFn: (data: DepositRequest) => walletService.deposit(data),
@@ -46,9 +59,12 @@ export const useWallet = () => {
     balance: balanceQuery.data?.balance ?? 0,
     balanceLoading: balanceQuery.isLoading,
     balanceError: balanceQuery.error,
-    transactions: transactionsQuery.data?.transactions ?? [],
+    transactions,
     transactionsLoading: transactionsQuery.isLoading,
     transactionsError: transactionsQuery.error,
+    transactionsHasMore: Boolean(transactionsQuery.hasNextPage),
+    transactionsFetchingMore: transactionsQuery.isFetchingNextPage,
+    transactionsLoadMore: transactionsQuery.fetchNextPage,
     deposit: depositMutation.mutate,
     depositLoading: depositMutation.isPending,
     depositError: depositMutation.error,

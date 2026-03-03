@@ -4,8 +4,8 @@ import {
   HeaderContainer,
   UserInfo,
   UserName,
-  UserEmail,
   HeaderActions,
+  UserWelcome,
 } from './styles';
 
 interface UserHeaderProps {
@@ -24,7 +24,6 @@ export const UserHeader = ({ showLogout = true }: UserHeaderProps) => {
   const { user, logout } = useAuth();
 
   const userName = user?.name || user?.email || 'Usuário';
-  const userEmail = user?.email || '';
 
   const handleLogout = async () => {
     await logout();
@@ -34,7 +33,7 @@ export const UserHeader = ({ showLogout = true }: UserHeaderProps) => {
     <HeaderContainer>
       <UserInfo>
         <UserName>Olá, {userName}</UserName>
-        {userEmail && <UserEmail>{userEmail}</UserEmail>}
+        <UserWelcome>Seja bem-vindo(a) à sua carteira digital</UserWelcome>
       </UserInfo>
       {showLogout && (
         <HeaderActions>

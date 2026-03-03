@@ -4,7 +4,7 @@ export const HeaderContainer = styled.div`
   display: none;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  margin: 20px 10px 0 0;
   padding: ${({ theme }) => theme.spacing.md};
   background: ${({ theme }) => theme.palette?.light?.primary ?? theme.colors.primary};
   border-radius: ${({ theme }) => theme.radius.lg};
@@ -28,7 +28,7 @@ export const UserName = styled.h2`
   font-weight: 600;
 `;
 
-export const UserEmail = styled.p`
+export const UserWelcome = styled.p`
   font-size: ${({ theme }) => theme.typography.small};
   color: ${({ theme }) => theme.palette?.light?.primaryForeground ?? '#fff'};
   margin: 0;

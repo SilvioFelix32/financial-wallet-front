@@ -43,10 +43,15 @@ export interface Transaction {
   recipientName?: string;
 }
 
-export interface TransactionsResponse {
-  transactions: Transaction[];
-  total: number;
+export interface TransactionsPagination {
   page: number;
   limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface TransactionsResponse {
+  transactions: Transaction[];
+  pagination: TransactionsPagination;
 }
 
