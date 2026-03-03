@@ -2,7 +2,7 @@ import type { RevertModalProps } from '@/interfaces/dashboard.interfaces';
 import { Modal } from '@/components/Modal';
 import { Button } from '@/components/Button';
 import { formatCurrency, formatDate } from '@/utils/formatters';
-import { getTransactionTypeLabel } from '../utils';
+import { getTransactionTypeLabel } from '../../../utils/dashboard-utils';
 
 export const RevertModal: React.FC<RevertModalProps> = ({
   isOpen,

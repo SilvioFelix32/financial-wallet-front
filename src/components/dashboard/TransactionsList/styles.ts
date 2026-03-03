@@ -2,60 +2,35 @@ import styled from 'styled-components';
 import { Card } from '@/components/Card';
 
 export const TransactionsCard = styled(Card)`
-  margin-top: ${({ theme }) => theme.spacing.lg};
+  width: 100%;
+  min-width: 0;
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  box-sizing: border-box;
 `;
 
-export const TransactionsHeader = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  text-align: left;
+export const TransactionsHeader = styled.div`
+  padding: 0.75rem 1rem 0;
+  @media (min-width: 1024px) {
+    padding: 1rem 1.5rem 0;
+  }
 `;
 
 export const TransactionsTitle = styled.h3`
-  font-size: ${({ theme }) => theme.typography.h3};
-  color: ${({ theme }) => theme.colors.textPrimary};
+  font-size: 1.125rem;
+  font-weight: 600;
   margin: 0;
+  color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
-type ExpandIconProps = {
-  $expanded: boolean;
-};
-
-export const ExpandIcon = styled.span<ExpandIconProps>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: ${({ $expanded }) => ($expanded ? 'rotate(180deg)' : 'rotate(0deg)')};
+export const TransactionList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
 `;
 
-type TransactionListProps = {
-  $expanded?: boolean;
-};
-
-export const TransactionList = styled.div<TransactionListProps>`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.sm};
-  overflow: hidden;
-  max-height: ${({ $expanded }) => ($expanded ? '2000px' : '0')};
-  margin-top: ${({ $expanded, theme }) => ($expanded ? theme.spacing.md : '0')};
-  opacity: ${({ $expanded }) => ($expanded ? 1 : 0)};
-  transition: max-height 0.7s cubic-bezier(0.4, 0, 0.2, 1), 
-              margin-top 0.5s ease, 
-              opacity 0.4s ease;
-`;
-
-export const EmptyState = styled.p`
+export const EmptyState = styled.div`
   text-align: center;
+  padding: 1.5rem;
+  font-size: ${({ theme }) => theme.typography.small};
   color: ${({ theme }) => theme.colors.textSecondary};
-  padding: ${({ theme }) => theme.spacing.lg};
 `;
-

@@ -10,7 +10,7 @@ import type { TransferFormData } from '@/interfaces/validations.types';
 import { Button } from '@/components/Button';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { SuccessMessage } from '@/components/SuccessMessage';
-import { UserHeader } from '@/components/UserHeader';
+import { DashboardLayout } from '@/components/AppSidebar';
 import { BalanceDisplay } from '@/components/transfer/BalanceDisplay';
 import { RecipientSelectField } from '@/components/transfer/RecipientSelectField';
 import { AmountInputField } from '@/components/transfer/AmountInputField';
@@ -112,21 +112,23 @@ export default function Transfer() {
 
   if (authLoading) {
     return (
-      <Container>
-        <FormCard>Carregando...</FormCard>
-      </Container>
+      <DashboardLayout>
+        <Container>
+          <FormCard>Carregando...</FormCard>
+        </Container>
+      </DashboardLayout>
     );
   }
 
   if (!isAuthenticated) {
-    router.push('/auth/signIn');
+    router.replace('/');
     return null;
   }
 
   return (
-    <Container>
-      <UserHeader showLogout={false} />
-      <Wrapper>
+    <DashboardLayout>
+      <Container>
+        <Wrapper>
         <FormCard>
           <Title>Transferir</Title>
           <Form onSubmit={handleSubmit(onSubmit)}>
@@ -175,7 +177,8 @@ export default function Transfer() {
             </ButtonGroup>
           </Form>
         </FormCard>
-      </Wrapper>
+        </Wrapper>
+      </Container>
 
       <ConfirmTransferModal
         isOpen={showConfirmModal}
@@ -185,7 +188,7 @@ export default function Transfer() {
         onConfirm={handleConfirmTransfer}
         onCancel={handleCancelTransfer}
       />
-    </Container>
+    </DashboardLayout>
   );
 }
 

@@ -4,36 +4,35 @@ import { useAuth } from '@/hooks/useAuth';
 import { useWallet } from '@/hooks/useWallet';
 import { useUser } from '@/hooks/useUser';
 import { Card } from '@/components/Card';
-import { UserHeader } from '@/components/UserHeader';
+import { DashboardLayout } from '@/components/AppSidebar';
 import { BalanceCardComponent } from '@/components/dashboard/BalanceCard';
-import { ActionsGridComponent } from '@/components/dashboard/ActionsGrid';
-import { UsersListComponent } from '@/components/dashboard/UsersList';
+import { UsersCard } from '@/components/dashboard/UsersCard';
 import { TransactionsList } from '@/components/dashboard/TransactionsList';
 import { RevertModal } from '@/components/dashboard/RevertModal';
 import type { Transaction } from '@/interfaces/wallet.interfaces';
-import { Container, Title } from '@/components/dashboard/styles';
+import {
+  Container,
+  ContentSection,
+  GreetingSection,
+  GreetingTitle,
+  GreetingSubtitle,
+  ContentGrid,
+  GridCol2,
+  GridCol3,
+} from '@/components/dashboard/styles';
+import { UserHeader } from '@/components/UserHeader';
 
 export default function Dashboard() {
   const router = useRouter();
   const { isAuthenticated, loading: authLoading } = useAuth();
-  const {
-    transactions,
-    transactionsLoading,
-    revert,
-    revertLoading,
-  } = useWallet();
-  const {
-    user,
-    userLoading,
-    usersList,
-    usersListLoading,
-    userId,
-  } = useUser();
+  const { transactions, transactionsLoading, revert, revertLoading } = useWallet();
+  const { user, userLoading, usersList, usersListLoading, userId } = useUser();
 
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [showRevertModal, setShowRevertModal] = useState(false);
 
   const userBalance = useMemo(() => user?.balance ?? 0, [user?.balance]);
+  const userName = user?.name || user?.email || 'Usuário';
   const availableUsers = useMemo(
     () => usersList.filter((u) => u.user_id !== userId),
     [usersList, userId]
@@ -41,16 +40,13 @@ export default function Dashboard() {
 
   const handleRevertClick = useCallback((transaction: Transaction) => {
     const type = transaction.type.toUpperCase();
-    if (type === 'REVERSAL' || type === 'REVERT') {
-      return;
-    }
+    if (type === 'REVERSAL' || type === 'REVERT') return;
     setSelectedTransaction(transaction);
     setShowRevertModal(true);
   }, []);
 
   const handleConfirmRevert = useCallback(() => {
     if (!selectedTransaction) return;
-
     revert(
       { transactionId: selectedTransaction.id },
       {
@@ -59,10 +55,9 @@ export default function Dashboard() {
           setSelectedTransaction(null);
         },
         onError: (error: unknown) => {
-          const errorMessage = error instanceof Error 
-            ? error.message 
-            : (error as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Erro ao reverter transação';
-          alert(errorMessage);
+          const err = error as { response?: { data?: { message?: string } } };
+          const message = err?.response?.data?.message || (error instanceof Error ? error.message : 'Erro ao reverter transação');
+          alert(message);
         },
       }
     );
@@ -75,36 +70,44 @@ export default function Dashboard() {
 
   if (authLoading || userLoading) {
     return (
-      <Container>
-        <Card>Carregando...</Card>
-      </Container>
+      <DashboardLayout>
+        <Container>
+          <Card>Carregando...</Card>
+        </Container>
+      </DashboardLayout>
     );
   }
 
   if (!isAuthenticated && !authLoading) {
-    router.replace('/auth/signIn');
+    router.replace('/');
     return null;
   }
 
   return (
-    <Container>
+    <DashboardLayout>
       <UserHeader />
-      <Title>Dashboard</Title>
+      <ContentSection>
+        <GreetingSection>
+          <GreetingTitle>Olá, {userName}</GreetingTitle>
+          <GreetingSubtitle>Bem-vindo à sua carteira digital</GreetingSubtitle>
+        </GreetingSection>
+        <BalanceCardComponent balance={userBalance} loading={userLoading} />
 
-      <BalanceCardComponent balance={userBalance} loading={userLoading} />
-      <ActionsGridComponent />
-
-      {availableUsers.length > 0 && (
-        <UsersListComponent users={availableUsers} loading={usersListLoading} />
-      )}
-
-      <TransactionsList
-        transactions={transactions}
-        loading={transactionsLoading}
-        userId={userId}
-        revertLoading={revertLoading}
-        onRevertClick={handleRevertClick}
-      />
+        <ContentGrid>
+          <GridCol2>
+            <UsersCard users={availableUsers} loading={usersListLoading} />
+          </GridCol2>
+          <GridCol3>
+            <TransactionsList
+              transactions={transactions}
+              loading={transactionsLoading}
+              userId={userId}
+              revertLoading={revertLoading}
+              onRevertClick={handleRevertClick}
+            />
+          </GridCol3>
+        </ContentGrid>
+      </ContentSection>
 
       <RevertModal
         isOpen={showRevertModal}
@@ -114,7 +117,6 @@ export default function Dashboard() {
         onConfirm={handleConfirmRevert}
         onCancel={handleCancelRevert}
       />
-    </Container>
+    </DashboardLayout>
   );
 }
-

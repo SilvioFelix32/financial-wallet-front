@@ -18,7 +18,7 @@ export const useAuth = () => {
 
   const logout = async () => {
     await storeLogout();
-    router.push('/auth/signIn');
+    router.push('/');
   };
 
   return {

@@ -12,7 +12,7 @@ import { Input } from '@/components/Input';
 import { Label } from '@/components/Label';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { SuccessMessage } from '@/components/SuccessMessage';
-import { UserHeader } from '@/components/UserHeader';
+import { DashboardLayout } from '@/components/AppSidebar';
 import {
   Container,
   Wrapper,
@@ -42,16 +42,18 @@ export default function Deposit() {
 
   if (authLoading) {
     return (
-      <Container>
-        <Wrapper>
-          <FormCard>Carregando...</FormCard>
-        </Wrapper>
-      </Container>
+      <DashboardLayout>
+        <Container>
+          <Wrapper>
+            <FormCard>Carregando...</FormCard>
+          </Wrapper>
+        </Container>
+      </DashboardLayout>
     );
   }
 
   if (!isAuthenticated) {
-    router.push('/auth/signIn');
+    router.replace('/');
     return null;
   }
 
@@ -82,9 +84,9 @@ export default function Deposit() {
   };
 
   return (
-    <Container>
-      <UserHeader showLogout={false} />
-      <Wrapper>
+    <DashboardLayout>
+      <Container>
+        <Wrapper>
         <FormCard>
           <Title>Depositar</Title>
           <Form onSubmit={handleSubmit(onSubmit)}>
@@ -144,8 +146,9 @@ export default function Deposit() {
             </ButtonGroup>
           </Form>
         </FormCard>
-      </Wrapper>
-    </Container>
+        </Wrapper>
+      </Container>
+    </DashboardLayout>
   );
 }
 

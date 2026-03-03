@@ -63,3 +63,14 @@ export const getRevertedTransactionIds = (transactions: Transaction[]): Set<stri
   return ids;
 };
 
+export const getTypeBadgeLabel = (transaction: Transaction, currentUserId: string | null): string => {
+  const type = transaction.type.toUpperCase();
+  if (type === 'DEPOSIT') return 'Depósito';
+  if (type === 'REVERSAL' || type === 'REVERT') return 'Reversão';
+  if (type === 'TRANSFER') {
+    if (transaction.senderId && transaction.senderId !== currentUserId) return 'Recebida';
+    return 'Enviada';
+  }
+  return type;
+};
+
