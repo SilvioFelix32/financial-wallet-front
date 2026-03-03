@@ -30,7 +30,7 @@ import {
   StyledLink,
 } from '@/styles/pages/auth.styles';
 
-export default function ForgotPassword() {
+export const ForgotPasswordCard = () => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -65,20 +65,22 @@ export default function ForgotPassword() {
 
   return (
     <Container>
-      <FormCard style={{ height: '380px' }} >
+      <FormCard style={{ height: '380px' }}>
         <PlayerWrapper>
           <Player
             autoplay
             loop
             src="https://lottie.host/44abdd4b-e3d8-4602-983b-a3cb64e11e6c/HqjtspK3un.json"
-            style={{ height: "120px", width: "120px" }}
+            style={{ height: '120px', width: '120px' }}
           />
         </PlayerWrapper>
         <Title style={{ textAlign: 'center', marginBottom: '15px' }}>Esqueci minha senha</Title>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <FormFields>
             <FormGroup>
-              <Label style={{ marginLeft: '5px' }} htmlFor="email">Email</Label>
+              <Label style={{ marginLeft: '5px' }} htmlFor="email">
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -106,7 +108,7 @@ export default function ForgotPassword() {
             </Button>
 
             <LinkContainer>
-              <Link href="/auth/signIn">
+              <Link href="/">
                 <StyledLink>Voltar para login</StyledLink>
               </Link>
             </LinkContainer>
@@ -115,5 +117,6 @@ export default function ForgotPassword() {
       </FormCard>
     </Container>
   );
-}
+};
 
+export default ForgotPasswordCard;

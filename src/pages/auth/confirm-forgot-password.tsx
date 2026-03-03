@@ -31,7 +31,7 @@ import {
   StyledLink,
 } from '@/styles/pages/auth.styles';
 
-export default function ConfirmForgotPassword() {
+export const ConfirmForgotPasswordCard = () => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -76,7 +76,7 @@ export default function ConfirmForgotPassword() {
       });
       setSuccess('Senha redefinida com sucesso! Redirecionando para login...');
       setTimeout(() => {
-        router.push('/auth/signIn');
+        router.push('/');
       }, 2000);
     } catch (err: any) {
       setError(err.message || 'Erro ao redefinir senha');
@@ -95,7 +95,7 @@ export default function ConfirmForgotPassword() {
             autoplay
             loop
             src="https://lottie.host/44abdd4b-e3d8-4602-983b-a3cb64e11e6c/HqjtspK3un.json"
-            style={{ height: "120px", width: "120px" }}
+            style={{ height: '120px', width: '120px' }}
           />
         </PlayerWrapper>
         <FormHeader>
@@ -171,5 +171,6 @@ export default function ConfirmForgotPassword() {
       </FormCard>
     </Container>
   );
-}
+};
 
+export default ConfirmForgotPasswordCard;

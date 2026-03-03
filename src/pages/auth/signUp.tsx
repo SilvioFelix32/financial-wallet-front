@@ -21,7 +21,7 @@ import {
   StyledLink,
 } from '@/styles/pages/auth.styles';
 
-export default function SignUp() {
+export const SignUpCard = () => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -126,7 +126,7 @@ export default function SignUp() {
 
           <LinkContainer>
             Já tem uma conta?{' '}
-            <Link href="/auth/signIn">
+            <Link href="/">
               <StyledLink>Entrar</StyledLink>
             </Link>
           </LinkContainer>
@@ -134,5 +134,6 @@ export default function SignUp() {
       </FormCard>
     </Container>
   );
-}
+};
 
+export default SignUpCard;

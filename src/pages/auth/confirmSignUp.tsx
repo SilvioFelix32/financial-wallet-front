@@ -31,7 +31,7 @@ import {
   StyledLink,
 } from '@/styles/pages/auth.styles';
 
-export default function ConfirmSignUp() {
+export const ConfirmSignUpCard = () => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -79,15 +79,15 @@ export default function ConfirmSignUp() {
       }, 2000);
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao confirmar conta';
-      
+
       if (errorMessage.includes('CONFIRMED') || errorMessage.includes('already confirmed')) {
         setSuccess('Conta já confirmada! Redirecionando para login...');
         setTimeout(() => {
-          router.push('/auth/signIn');
+          router.push('/');
         }, 1500);
         return;
       }
-      
+
       setError(errorMessage);
     }
   };
@@ -104,7 +104,7 @@ export default function ConfirmSignUp() {
             autoplay
             loop
             src="https://lottie.host/44abdd4b-e3d8-4602-983b-a3cb64e11e6c/HqjtspK3un.json"
-            style={{ height: "120px", width: "120px" }}
+            style={{ height: '120px', width: '120px' }}
           />
         </PlayerWrapper>
         <FormHeader>
@@ -166,5 +166,6 @@ export default function ConfirmSignUp() {
       </FormCard>
     </Container>
   );
-}
+};
 
+export default ConfirmSignUpCard;

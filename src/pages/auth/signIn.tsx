@@ -1,61 +1,51 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/hooks/useAuth';
-import { signInSchema } from '@/lib/validations';
-import type { SignInFormData } from '@/interfaces/validations.types';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { Label } from '@/components/Label';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { SuccessMessage } from '@/components/SuccessMessage';
-import dynamic from 'next/dynamic';
+import { signInSchema } from '@/lib/validations';
+import type { SignInFormData } from '@/interfaces/validations.types';
+import {
+  LoginCard as LoginCardContainer,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardBody,
+  FieldGroup,
+  FieldHeader,
+  HelperLink,
+  PasswordFieldWrapper,
+  PasswordToggle,
+  SubmitWrapper,
+  FooterText,
+  FooterLink,
+} from '@/styles/pages/index.styles';
+import { PlayerWrapper } from '@/styles/pages/auth.styles';
 
 const Player = dynamic(
   () => import('@lottiefiles/react-lottie-player').then((mod) => mod.Player),
   { ssr: false }
 );
-import Link from 'next/link';
-import { getCookie } from '@/utils/cookies';
-import {
-  Container,
-  FormCard,
-  PlayerWrapper,
-  FormHeader,
-  Title,
-  Form,
-  FormFields,
-  FormGroup,
-  FormActions,
-  LinkContainer,
-  StyledLink,
-} from '@/styles/pages/auth.styles';
 
-export default function SignIn() {
+export const LoginCard = () => {
   const router = useRouter();
   const { login, isAuthenticated, loading } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      let attempts = 0;
-      const maxAttempts = 3;
-      
-      const checkAndRedirect = () => {
-        attempts++;
-        const hasCookie = getCookie('cognito_access_token');
-        if (hasCookie) {
-          const redirect = router.query.redirect as string || '/dashboard';
-          window.location.href = redirect;
-        } else if (attempts < maxAttempts) {
-          setTimeout(checkAndRedirect, 200);
-        }
-      };
-      checkAndRedirect();
+      router.push('/dashboard');
     }
-  }, [isAuthenticated, loading]);
+  }, [isAuthenticated, loading, router]);
 
   const {
     register,
@@ -70,8 +60,7 @@ export default function SignIn() {
     setSuccess(null);
 
     if (isAuthenticated) {
-      const redirect = router.query.redirect as string;
-      router.push(redirect || '/dashboard');
+      router.push('/dashboard');
       return;
     }
 
@@ -84,102 +73,101 @@ export default function SignIn() {
       }
 
       setSuccess('Login realizado com sucesso!');
-      
-      const redirect = router.query.redirect as string || '/dashboard';
-      await router.replace(redirect);
-    } catch (error: any) {
-      setError(error.message || 'Erro ao fazer login');
+      router.push('/dashboard');
+    } catch (err: any) {
+      setError(err.message || 'Erro ao fazer login');
     }
   };
 
   if (loading) {
-    return (
-      <Container>
-        <FormCard>
-          <Title>Carregando...</Title>
-        </FormCard>
-      </Container>
-    );
-  }
-
-  if (isAuthenticated) {
     return null;
   }
 
   return (
-    <Container>
-      <FormCard>
-        <PlayerWrapper>
-          <Player
-            autoplay
-            loop
-            src="https://lottie.host/44abdd4b-e3d8-4602-983b-a3cb64e11e6c/HqjtspK3un.json"
-            style={{ height: "120px", width: "120px" }}
-          />
-        </PlayerWrapper>
-        <FormHeader>
-          <Title>Entrar</Title>
-        </FormHeader>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <FormFields>
-            <FormGroup>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                hasError={!!errors.email}
-                {...register('email')}
-              />
-              {errors.email && (
-                <ErrorMessage>{errors.email.message}</ErrorMessage>
-              )}
-            </FormGroup>
+    <LoginCardContainer>
+      <PlayerWrapper>
+        <Player
+          autoplay
+          loop
+          src="https://lottie.host/44abdd4b-e3d8-4602-983b-a3cb64e11e6c/HqjtspK3un.json"
+          style={{ height: '120px', width: '120px' }}
+        />
+      </PlayerWrapper>
 
-            <FormGroup>
+      <CardHeader>
+        <CardTitle>Entrar</CardTitle>
+        <CardDescription>Acesse sua carteira digital</CardDescription>
+      </CardHeader>
+
+      <CardBody>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FieldGroup>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="seu@email.com"
+              hasError={!!errors.email}
+              autoComplete="email"
+              style={{ height: '36px' }}
+              {...register('email')}
+            />
+            {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
+          </FieldGroup>
+
+          <FieldGroup>
+            <FieldHeader>
               <Label htmlFor="password">Senha</Label>
+              <Link href="/auth/forgot-password" passHref legacyBehavior>
+                <HelperLink as="a">Esqueceu sua senha?</HelperLink>
+              </Link>
+            </FieldHeader>
+            <PasswordFieldWrapper>
               <Input
                 id="password"
-                type="password"
-                placeholder="••••••••"
+                style={{ height: '36px' }}
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Sua senha"
                 hasError={!!errors.password}
+                autoComplete="current-password"
                 {...register('password')}
               />
-              {errors.password && (
-                <ErrorMessage>{errors.password.message}</ErrorMessage>
-              )}
-            </FormGroup>
+              <PasswordToggle
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? 'Ocultar' : 'Mostrar'}
+              </PasswordToggle>
+            </PasswordFieldWrapper>
+            {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
+          </FieldGroup>
 
-            {error && <ErrorMessage>{error}</ErrorMessage>}
-            {success && <SuccessMessage>{success}</SuccessMessage>}
-          </FormFields>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          {success && <SuccessMessage>{success}</SuccessMessage>}
 
-          <FormActions>
+          <SubmitWrapper>
             <Button
               type="submit"
               fullWidth
               disabled={isSubmitting}
               variant="primary"
+              style={{ height: '36px' }}
             >
               {isSubmitting ? 'Entrando...' : 'Entrar'}
             </Button>
+          </SubmitWrapper>
 
-            <LinkContainer>
-              <Link href="/auth/forgot-password">
-                <StyledLink>Esqueceu sua senha?</StyledLink>
-              </Link>
-            </LinkContainer>
-
-            <LinkContainer>
-              Não tem uma conta?{' '}
-              <Link href="/auth/signUp">
-                <StyledLink>Cadastre-se</StyledLink>
-              </Link>
-            </LinkContainer>
-          </FormActions>
-        </Form>
-      </FormCard>
-    </Container>
+          <FooterText>
+            Não tem uma conta?
+            <Link href="/auth/signUp" passHref legacyBehavior>
+              <FooterLink as="a">Cadastre-se</FooterLink>
+            </Link>
+          </FooterText>
+        </form>
+      </CardBody>
+    </LoginCardContainer>
   );
-}
+};
+
+export default LoginCard;
 
