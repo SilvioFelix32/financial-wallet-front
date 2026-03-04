@@ -79,7 +79,7 @@ export const NavLink = styled(Link)<{ $active?: boolean }>`
   text-decoration: none;
   font-weight: 500;
   transition: background 0.2s;
-  background: ${({ $active, theme }) =>
+  background: ${({ $active }) =>
     $active ? 'rgba(255,255,255,0.15)' : 'transparent'};
   &:hover {
     background: rgba(255, 255, 255, 0.1);

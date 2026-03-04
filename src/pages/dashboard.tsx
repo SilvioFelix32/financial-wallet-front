@@ -5,10 +5,10 @@ import { useWallet } from '@/hooks/useWallet';
 import { useUser } from '@/hooks/useUser';
 import { Card } from '@/components/Card';
 import { DashboardLayout } from '@/components/AppSidebar';
-import { BalanceCardComponent } from '@/components/dashboard/BalanceCard';
-import { UsersCard } from '@/components/dashboard/UsersCard';
-import { TransactionsList } from '@/components/dashboard/TransactionsList';
-import { RevertModal } from '@/components/dashboard/RevertModal';
+import { BalanceCardComponent } from '@/components/AppDashboard/BalanceCard';
+import { UsersCard } from '@/components/AppDashboard/UsersCard';
+import { TransactionsList } from '@/components/AppDashboard/TransactionsList';
+import { RevertModal } from '@/components/AppDashboard/RevertModal';
 import type { Transaction } from '@/interfaces/wallet.interfaces';
 import {
   Container,
@@ -16,7 +16,7 @@ import {
   ContentGrid,
   GridCol2,
   GridCol3,
-} from '@/components/dashboard/styles';
+} from '@/components/AppDashboard/styles';
 import { UserHeader } from '@/components/UserHeader';
 
 export default function Dashboard() {

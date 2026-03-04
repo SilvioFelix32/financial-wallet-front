@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/hooks/useAuth';
@@ -118,8 +117,14 @@ export default function Deposit() {
           reset();
           setTimeout(() => router.push('/dashboard'), 2000);
         },
-        onError: (err: { response?: { data?: { message?: string } } }) => {
-          setError(err?.response?.data?.message || 'Erro ao realizar depósito');
+        onError: (err: unknown) => {
+          const message =
+            err && typeof err === 'object' && 'response' in err
+              ? (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+              : err instanceof Error
+                ? err.message
+                : null;
+          setError(message || 'Erro ao realizar depósito');
         },
       });
     } catch (err: unknown) {
