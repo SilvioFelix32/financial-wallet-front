@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const protectedRoutes = ['/dashboard', '/deposit', '/transfer'];
-const publicRoutes = ['/auth/signIn', '/auth/signUp', '/auth/forgot-password'];
+const publicRoutes = ['/', '/auth/signUp', '/auth/forgot-password'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -16,17 +16,17 @@ export function proxy(request: NextRequest) {
   const isPublicRoute = publicRoutes.includes(pathname) || pathname === '/';
 
   if (isProtectedRoute && !token) {
-    const loginUrl = new URL('/auth/signIn', request.url);
+    const loginUrl = new URL('/', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   if (isPublicRoute && token && pathname !== '/') {
-    if (pathname === '/auth/signIn') {
+    if (pathname === '/') {
       const redirectPath = request.nextUrl.searchParams.get('redirect') || '/dashboard';
       return NextResponse.redirect(new URL(redirectPath, request.url));
     }
-    if (pathname !== '/auth/signIn') {
+    if (pathname !== '/') {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
   }

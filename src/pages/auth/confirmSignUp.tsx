@@ -75,7 +75,7 @@ export const ConfirmSignUpCard = () => {
       });
       setSuccess('Conta confirmada com sucesso! Redirecionando para login...');
       setTimeout(() => {
-        router.push('/auth/signIn');
+        router.push('/');
       }, 2000);
     } catch (err: any) {
       const errorMessage = err.message || 'Erro ao confirmar conta';
@@ -83,7 +83,7 @@ export const ConfirmSignUpCard = () => {
       if (errorMessage.includes('CONFIRMED') || errorMessage.includes('already confirmed')) {
         setSuccess('Conta já confirmada! Redirecionando para login...');
         setTimeout(() => {
-          router.push('/');
+          router.push("/");
         }, 1500);
         return;
       }
@@ -157,7 +157,7 @@ export const ConfirmSignUpCard = () => {
             </Button>
 
             <LinkContainer>
-              <Link href="/auth/signIn">
+              <Link href="/">
                 <StyledLink>Voltar para login</StyledLink>
               </Link>
             </LinkContainer>

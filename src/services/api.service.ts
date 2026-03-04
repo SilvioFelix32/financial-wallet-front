@@ -30,7 +30,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       removeCookie('cognito_access_token');
       removeCookie('cognito_id_token');
-      window.location.href = '/auth/signIn';
+      window.location.href = '/';
     }
     return Promise.reject(error);
   }

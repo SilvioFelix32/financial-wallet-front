@@ -162,7 +162,7 @@ export const ConfirmForgotPasswordCard = () => {
             </Button>
 
             <LinkContainer>
-              <Link href="/auth/signIn">
+              <Link href="/">
                 <StyledLink>Voltar para login</StyledLink>
               </Link>
             </LinkContainer>
